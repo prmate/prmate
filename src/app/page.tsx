@@ -317,7 +317,15 @@ export default function HomePage() {
       <nav className="sticky top-0 z-50 bg-gray-950/80 backdrop-blur-md border-b border-gray-900">
         <div className="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
           <a href="#" className="flex items-center gap-2 font-bold text-lg">
-            <span>🤖</span>
+            <span className="flex w-7 h-7 items-center justify-center rounded-lg bg-gray-900 border border-gray-800 overflow-hidden shrink-0">
+              <svg viewBox="0 0 320 360" width="18" height="20">
+                <line x1="85" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.5)" strokeWidth="22" strokeLinecap="round"/>
+                <line x1="235" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.5)" strokeWidth="22" strokeLinecap="round"/>
+                <circle cx="85"  cy="75"  r="50" fill="#3B82F6" />
+                <circle cx="235" cy="75"  r="50" fill="#3B82F6" />
+                <circle cx="160" cy="295" r="62" fill="#4ADA8C" />
+              </svg>
+            </span>
             <span>PRmate</span>
             <span className="text-xs font-normal text-gray-500">v1.1.0</span>
           </a>
