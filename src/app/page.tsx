@@ -657,7 +657,15 @@ export default function HomePage() {
         <div className="bg-[#0d1117] border border-[#30363d] rounded-lg overflow-hidden">
           {/* 헤더 */}
           <div className="bg-[#161b22] border-b border-[#30363d] px-4 py-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-sm">🤖</div>
+            <div className="w-8 h-8 rounded-full bg-gray-900 border border-gray-700 flex items-center justify-center shrink-0">
+                <svg viewBox="0 0 320 360" width="16" height="18">
+                  <line x1="85" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.5)" strokeWidth="22" strokeLinecap="round"/>
+                  <line x1="235" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.5)" strokeWidth="22" strokeLinecap="round"/>
+                  <circle cx="85"  cy="75"  r="50" fill="#3B82F6" />
+                  <circle cx="235" cy="75"  r="50" fill="#3B82F6" />
+                  <circle cx="160" cy="295" r="62" fill="#4ADA8C" />
+                </svg>
+              </div>
             <div className="flex-1">
               <span className="font-semibold text-gray-200">github-actions</span>
               <span className="text-gray-500 text-sm ml-1">bot</span>
@@ -884,7 +892,17 @@ export default function HomePage() {
       {/* ══════════════════════ FOOTER ══════════════════════ */}
       <footer className="border-t border-gray-900 bg-gray-950 py-8 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
-          <div className="text-gray-500">© 2026 PRmate. MIT License. Made with 🤖 in Seoul.</div>
+          <div className="text-gray-500 flex items-center gap-1.5">
+            © 2026 PRmate. MIT License. Made with
+            <svg viewBox="0 0 320 360" width="13" height="15" style={{ display: 'inline', verticalAlign: 'middle' }}>
+              <line x1="85" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.6)" strokeWidth="22" strokeLinecap="round"/>
+              <line x1="235" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.6)" strokeWidth="22" strokeLinecap="round"/>
+              <circle cx="85" cy="75" r="50" fill="#3B82F6" />
+              <circle cx="235" cy="75" r="50" fill="#3B82F6" />
+              <circle cx="160" cy="295" r="62" fill="#4ADA8C" />
+            </svg>
+            in Seoul.
+          </div>
           <div className="flex gap-6 text-gray-400 flex-wrap justify-center">
             <a href="https://github.com/prmate/prmate" className="hover:text-gray-200">
               GitHub
