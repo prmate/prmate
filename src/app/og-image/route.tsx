@@ -10,76 +10,90 @@ export async function GET() {
           width: '100%',
           height: '100%',
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #030712 0%, #1e3a8a 100%)',
+          background: '#0D1217',
+          padding: '0 100px',
+          gap: '80px',
           fontFamily: 'sans-serif',
         }}
       >
-        {/* 상단 배지 */}
+        {/* 아이콘 */}
         <div
           style={{
-            background: 'rgba(30, 58, 138, 0.5)',
-            border: '1px solid rgba(59, 130, 246, 0.5)',
-            color: '#93c5fd',
-            padding: '8px 24px',
-            borderRadius: '999px',
-            fontSize: '24px',
-            marginBottom: '40px',
-          }}
-        >
-          🚀 베타 오픈 — 무료로 시작하기
-        </div>
-
-        {/* 메인 제목 */}
-        <div
-          style={{
-            fontSize: '96px',
-            fontWeight: 'bold',
-            color: '#f3f4f6',
-            textAlign: 'center',
-            lineHeight: 1.1,
-            marginBottom: '24px',
-          }}
-        >
-          PR 리뷰, <span style={{ color: '#60a5fa' }}>이제 한국어로</span>
-        </div>
-
-        {/* 설명 */}
-        <div
-          style={{
-            fontSize: '32px',
-            color: '#9ca3af',
-            textAlign: 'center',
-            maxWidth: '900px',
-            lineHeight: 1.4,
-          }}
-        >
-          우아한형제들 · 카카오 · 네이버 · SK · LG · NHN · 쿠팡 · LINE · 토스
-        </div>
-
-        {/* 푸터 */}
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '40px',
+            width: 230,
+            height: 230,
+            background: '#161D2C',
+            borderRadius: 52,
             display: 'flex',
             alignItems: 'center',
-            gap: '16px',
-            color: '#6b7280',
-            fontSize: '24px',
+            justifyContent: 'center',
+            border: '3px solid rgba(59,130,246,0.3)',
+            flexShrink: 0,
           }}
         >
-          <span style={{ fontSize: '32px' }}>🤖</span>
-          <span style={{ fontWeight: 'bold', color: '#e5e7eb' }}>PRmate</span>
-          <span>— prmate.dev</span>
+          <svg width="160" height="180" viewBox="0 0 320 360">
+            <line
+              x1="85" y1="75" x2="160" y2="255"
+              stroke="rgba(59,130,246,0.4)" strokeWidth="14" strokeLinecap="round"
+            />
+            <line
+              x1="235" y1="75" x2="160" y2="255"
+              stroke="rgba(59,130,246,0.4)" strokeWidth="14" strokeLinecap="round"
+            />
+            <circle cx="85"  cy="75"  r="50" fill="#3B82F6" />
+            <circle cx="235" cy="75"  r="50" fill="#3B82F6" />
+            <circle cx="160" cy="295" r="62" fill="#4ADA8C" />
+          </svg>
+        </div>
+
+        {/* 텍스트 */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <div style={{ fontSize: 96, fontWeight: 700, color: '#F3F4F6', lineHeight: 1 }}>
+            PRmate
+          </div>
+          <div style={{ fontSize: 36, color: '#9CA3AF', lineHeight: 1.4 }}>
+            한국어 AI 코드 리뷰
+          </div>
+          <div style={{ fontSize: 26, color: '#3B82F6' }}>
+            우아한테크코스 · 네이버 Hackday · 토스 Frontend
+          </div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              marginTop: '8px',
+            }}
+          >
+            <div
+              style={{
+                background: 'rgba(59,130,246,0.15)',
+                border: '1px solid rgba(59,130,246,0.4)',
+                color: '#93C5FD',
+                padding: '6px 18px',
+                borderRadius: 999,
+                fontSize: '22px',
+              }}
+            >
+              🚀 베타 무료
+            </div>
+            <div
+              style={{
+                background: 'rgba(74,218,140,0.12)',
+                border: '1px solid rgba(74,218,140,0.35)',
+                color: '#6EE7B7',
+                padding: '6px 18px',
+                borderRadius: 999,
+                fontSize: '22px',
+              }}
+            >
+              ✓ 공식 자료 기반
+            </div>
+          </div>
         </div>
       </div>
     ),
-    {
-      width: 1200,
-      height: 630,
-    }
+    { width: 1200, height: 630 },
   );
 }
