@@ -47,3 +47,7 @@ next-env.d.ts
 
 # local dev tooling
 .claude/
+
+# bundled action — dist/review.js만 커밋, source map은 제외
+dist/*.map
+dist/*.LEGAL.txt

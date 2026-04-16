@@ -2,8 +2,9 @@ name: PRmate — 한국어 AI 코드 리뷰
 
 on:
   pull_request:
-    # ready_for_review 추가: Draft → Ready 전환 시에도 트리거
-    types: [opened, synchronize, reopened, ready_for_review]
+    # ready_for_review: Draft → Ready 전환 시 트리거
+    # edited: PR 제목에 [re-review] 추가 시 재트리거 (Week 4-8)
+    types: [opened, synchronize, reopened, ready_for_review, edited]
 
 permissions:
   pull-requests: write
@@ -15,14 +16,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
-    # 아래 조건 하나라도 해당하면 리뷰 스킵:
+    # 스킵 조건:
     # - Draft PR (아직 리뷰 준비 안 됨)
     # - PR 제목에 [skip review] 포함 (수동 opt-out)
-    # - 소스 브랜치가 test/** 로 시작 (실험용 브랜치)
+    # - 소스 브랜치가 test/** (실험 브랜치)
+    # - edited 이벤트는 [re-review] 있을 때만 (Week 4-8)
     if: >-
       github.event.pull_request.draft == false &&
       !contains(github.event.pull_request.title, '[skip review]') &&
-      !startsWith(github.head_ref, 'test/')
+      !startsWith(github.head_ref, 'test/') &&
+      (github.event.action != 'edited' || contains(github.event.pull_request.title, '[re-review]'))
 
     steps:
       - name: 코드 체크아웃
