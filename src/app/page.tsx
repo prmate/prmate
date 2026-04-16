@@ -893,7 +893,7 @@ export default function HomePage() {
       <footer className="border-t border-gray-900 bg-gray-950 py-8 px-6">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
           <div className="text-gray-500 flex items-center gap-1.5">
-            © 2026 PRmate. MIT License. Made with
+            © 2026 PRmate. Made with
             <svg viewBox="0 0 320 360" width="13" height="15" style={{ display: 'inline', verticalAlign: 'middle' }}>
               <line x1="85" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.6)" strokeWidth="22" strokeLinecap="round"/>
               <line x1="235" y1="75" x2="160" y2="255" stroke="rgba(59,130,246,0.6)" strokeWidth="22" strokeLinecap="round"/>
