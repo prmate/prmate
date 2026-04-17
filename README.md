@@ -90,6 +90,16 @@ rules:
 custom_prompt: |
   우리 팀은 함수형 프로그래밍 원칙을 중시합니다.
   가변 상태(mutation) 사용을 강하게 지적해주세요.
+
+# Slack / Discord 알림 (선택)
+notifications:
+  slack:
+    webhook_url_secret: SLACK_WEBHOOK_URL   # GitHub Secret 이름
+    on_events: [review_completed, review_failed]
+    mention: "@channel"                     # 선택사항
+  discord:
+    webhook_url_secret: DISCORD_WEBHOOK_URL # GitHub Secret 이름
+    on_events: [review_completed, review_failed]
 ```
 
 ### 4단계: PR 열기 → 자동 리뷰 확인 🎉
@@ -129,7 +139,7 @@ convention_file: .prmate/our-style.md
 | `github_token` | GitHub 토큰 | ❌ | `github.token` |
 | `config_path` | 설정 파일 경로 | ❌ | `.prmate.yml` |
 | `claude_model` | Claude 모델 | ❌ | `claude-sonnet-4-6` |
-| `timeout_ms` | 타임아웃 (ms) | ❌ | `90000` |
+| `timeout_ms` | 타임아웃 (ms) | ❌ | `240000` |
 
 ## 📤 Action Outputs
 
@@ -161,6 +171,46 @@ exclude_paths:
   - "vendor/**"
   - "experimental/**"
 ```
+
+---
+
+## 🔔 Slack / Discord 알림
+
+리뷰 완료 또는 실패 시 팀 채널로 알림을 전송할 수 있습니다.
+
+### 1. Webhook URL을 GitHub Secret에 등록
+
+레포 → **Settings** → **Secrets and variables** → **Actions** → New secret
+
+| Secret 이름 | 값 |
+|------------|-----|
+| `SLACK_WEBHOOK_URL` | Slack Incoming Webhook URL |
+| `DISCORD_WEBHOOK_URL` | Discord Webhook URL |
+
+### 2. `.prmate.yml`에 알림 설정 추가
+
+```yaml
+notifications:
+  slack:
+    webhook_url_secret: SLACK_WEBHOOK_URL   # 위에서 등록한 Secret 이름
+    on_events: [review_completed, review_failed]
+    mention: "@channel"                     # 선택: 멘션할 대상
+
+  discord:
+    webhook_url_secret: DISCORD_WEBHOOK_URL
+    on_events: [review_completed, review_failed]
+```
+
+### 알림 내용
+
+**리뷰 완료 시:**
+- 저장소명, PR 링크
+- 분석 파일 수, 비용
+
+**리뷰 실패 시:**
+- 오류 유형, 오류 내용
+
+> Slack은 Incoming Webhooks 앱을, Discord는 채널 설정 → 연동 → 웹후크에서 URL을 발급받을 수 있습니다.
 
 ---
 

@@ -102,7 +102,17 @@ rules:
 # 커스텀 프롬프트 주입
 custom_prompt: |
   우리 팀은 함수형 프로그래밍 원칙을 중시합니다.
-  가변 상태(mutation) 사용을 강하게 지적해주세요.`;
+  가변 상태(mutation) 사용을 강하게 지적해주세요.
+
+# Slack / Discord 알림 (선택)
+notifications:
+  slack:
+    webhook_url_secret: SLACK_WEBHOOK_URL   # GitHub Secret 이름
+    on_events: [review_completed, review_failed]
+    mention: "@channel"                     # 선택사항
+  discord:
+    webhook_url_secret: DISCORD_WEBHOOK_URL # GitHub Secret 이름
+    on_events: [review_completed, review_failed]`;
 
 const PAIN_POINTS = [
   { source: 'turtle0204.tistory (2025.09)', quote: '"config 적용 안 되서 자꾸 영어로 말함"' },
@@ -746,6 +756,83 @@ export default function HomePage() {
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ══════════════════════ SLACK / DISCORD 알림 ══════════════════════ */}
+      <section className="max-w-4xl mx-auto px-6 py-10" id="notifications">
+        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 md:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-3xl">🔔</span>
+            <h2 className="text-2xl font-bold">Slack · Discord 알림</h2>
+          </div>
+          <p className="text-gray-400 mb-6 leading-relaxed">
+            리뷰 완료 또는 실패 시 팀 채널로 즉시 알림을 받을 수 있습니다.
+            CodeRabbit 등이 유료 플랜에서 예약 리포트 방식으로 제공하는 것과 달리, PRmate는 PR 이벤트 즉시 전송합니다.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-6 mb-6">
+            {/* Step 1 */}
+            <div className="bg-gray-950 border border-gray-800 rounded-lg p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                <h3 className="font-semibold">Webhook URL을 GitHub Secret에 등록</h3>
+              </div>
+              <p className="text-gray-400 text-sm mb-3">
+                레포 → <strong className="text-gray-200">Settings</strong> → <strong className="text-gray-200">Secrets and variables</strong> → <strong className="text-gray-200">Actions</strong>
+              </p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between bg-gray-900 rounded px-3 py-2 text-xs">
+                  <code className="text-green-300">SLACK_WEBHOOK_URL</code>
+                  <span className="text-gray-500">Slack Incoming Webhook URL</span>
+                </div>
+                <div className="flex items-center justify-between bg-gray-900 rounded px-3 py-2 text-xs">
+                  <code className="text-green-300">DISCORD_WEBHOOK_URL</code>
+                  <span className="text-gray-500">Discord Webhook URL</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-gray-950 border border-gray-800 rounded-lg p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                <h3 className="font-semibold">.prmate.yml에 알림 설정 추가</h3>
+              </div>
+              <p className="text-gray-400 text-sm mb-3">위 CONFIG_YAML 예시 하단의 <code className="text-blue-400 bg-gray-900 px-1 py-0.5 rounded text-xs">notifications</code> 블록을 참고하세요.</p>
+              <div className="space-y-1 text-xs">
+                <p className="text-gray-500">• <code className="text-gray-300">webhook_url_secret</code> — 등록한 Secret 이름</p>
+                <p className="text-gray-500">• <code className="text-gray-300">on_events</code> — <code className="text-gray-400">review_completed</code> / <code className="text-gray-400">review_failed</code></p>
+                <p className="text-gray-500">• <code className="text-gray-300">mention</code> — <code className="text-gray-400">&quot;@channel&quot;</code> 등 선택사항</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 알림 내용 */}
+          <div className="border-t border-gray-800 pt-5">
+            <h3 className="font-semibold mb-3 text-sm text-gray-300">알림에 포함되는 내용</h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div className="bg-gray-950 rounded-lg p-4 border border-green-900/40">
+                <p className="text-green-400 font-semibold mb-2">✅ 리뷰 완료 시</p>
+                <ul className="text-gray-400 space-y-1 text-xs">
+                  <li>• 저장소명 및 PR 링크</li>
+                  <li>• 분석한 파일 수</li>
+                  <li>• Claude API 사용 비용</li>
+                </ul>
+              </div>
+              <div className="bg-gray-950 rounded-lg p-4 border border-red-900/40">
+                <p className="text-red-400 font-semibold mb-2">❌ 리뷰 실패 시</p>
+                <ul className="text-gray-400 space-y-1 text-xs">
+                  <li>• 오류 유형 및 내용</li>
+                  <li>• PR 링크</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <p className="text-xs text-gray-500 mt-4">
+            Slack은 <strong className="text-gray-400">Incoming Webhooks 앱</strong>을, Discord는 <strong className="text-gray-400">채널 설정 → 연동 → 웹후크</strong>에서 URL을 발급받을 수 있습니다.
+          </p>
         </div>
       </section>
 
