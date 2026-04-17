@@ -1,4 +1,4 @@
-# PRmate 🤖 — 한국어 AI 코드 리뷰
+<h1><img src="https://raw.githubusercontent.com/prmate/prmate/master/icon.svg" height="28" align="absmiddle" alt="PRmate icon"> PRmate — 한국어 AI 코드 리뷰</h1>
 
 > **GitHub PR이 열리면 자동으로 한국어로 코드 리뷰 코멘트를 게시합니다.**
 > 우아한테크코스, 네이버 Hackday, 토스 Frontend Fundamentals 등 **공식 공개** 컨벤션 프리셋 내장.
