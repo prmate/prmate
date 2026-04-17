@@ -63,7 +63,7 @@ function evaluateFileRules(
   return { skip: false };
 }
 
-function truncatePatch(patch: string, maxLines = 500): string {
+function truncatePatch(patch: string, maxLines = 3000): string {
   const lines = patch.split('\n');
   if (lines.length <= maxLines) return patch;
   return (

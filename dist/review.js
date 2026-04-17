@@ -8406,7 +8406,7 @@ function evaluateFileRules(filename, rules) {
   }
   return { skip: false };
 }
-function truncatePatch(patch, maxLines = 500) {
+function truncatePatch(patch, maxLines = 3e3) {
   const lines = patch.split("\n");
   if (lines.length <= maxLines) return patch;
   return lines.slice(0, maxLines).join("\n") + `
@@ -14302,9 +14302,9 @@ var MODEL = resolveModelId("sonnet");
 var MAX_TOKENS = 4096;
 function parseTimeout() {
   const raw = process.env.PRMATE_TIMEOUT_MS;
-  if (!raw) return 9e4;
+  if (!raw) return 24e4;
   const parsed = Number(raw);
-  if (!Number.isFinite(parsed) || parsed <= 0) return 9e4;
+  if (!Number.isFinite(parsed) || parsed <= 0) return 24e4;
   return parsed;
 }
 var TIMEOUT_MS = parseTimeout();
@@ -14515,7 +14515,8 @@ ${ex.content}
 
 // src/lib/review/engine.ts
 var MAX_ATTEMPTS = 2;
-var CHUNK_SIZE = 8;
+var CHUNK_FILE_THRESHOLD = 8;
+var CHUNK_TOKEN_BUDGET = 15e4;
 function buildSystemPrompt(config) {
   const convention = getConventionRuleset(config.convention, config.convention_file);
   const conventionText = formatConventionForPrompt(convention);
@@ -14733,27 +14734,44 @@ async function callClaude(systemPrompt, userMessage, config) {
   }
   return callWithRetry(1);
 }
-function shouldChunk(context, config) {
-  return context.files.length > CHUNK_SIZE;
+function estimateFileTokens(file) {
+  return Math.ceil((file.patch?.length ?? 0) / 4);
+}
+function shouldChunk(context, _config) {
+  if (context.files.length > CHUNK_FILE_THRESHOLD) return true;
+  const totalTokens = context.files.reduce((sum, f) => sum + estimateFileTokens(f), 0);
+  return totalTokens > CHUNK_TOKEN_BUDGET;
+}
+function chunkByTokenBudget(files) {
+  const chunks = [];
+  let current = [];
+  let currentTokens = 0;
+  for (const file of files) {
+    const tokens = estimateFileTokens(file);
+    if (current.length > 0 && currentTokens + tokens > CHUNK_TOKEN_BUDGET) {
+      chunks.push(current);
+      current = [file];
+      currentTokens = tokens;
+    } else {
+      current.push(file);
+      currentTokens += tokens;
+    }
+  }
+  if (current.length > 0) chunks.push(current);
+  return chunks;
 }
 async function generateChunkedReview(context, config) {
-  const chunks = chunkFiles(context.files, CHUNK_SIZE);
-  console.log(`[PRmate] \uB300\uD615 PR \uCCAD\uD0B9: ${chunks.length}\uAC1C \uCCAD\uD06C\uB85C \uBD84\uD560 \uCC98\uB9AC`);
+  const chunks = chunkByTokenBudget(context.files);
+  console.log(`[PRmate] \uB300\uD615 PR \uCCAD\uD0B9: ${chunks.length}\uAC1C \uCCAD\uD06C\uB85C \uBD84\uD560 \uCC98\uB9AC (\uD1A0\uD070 \uC608\uC0B0 \uAE30\uBC18)`);
   const results = [];
   for (let i = 0; i < chunks.length; i++) {
-    console.log(`[PRmate] \uCCAD\uD06C ${i + 1}/${chunks.length} \uCC98\uB9AC \uC911...`);
+    const estimatedTokens = chunks[i].reduce((s, f) => s + estimateFileTokens(f), 0);
+    console.log(`[PRmate] \uCCAD\uD06C ${i + 1}/${chunks.length} \uCC98\uB9AC \uC911... (${chunks[i].length}\uD30C\uC77C, \uCD94\uC815 ${estimatedTokens.toLocaleString()} \uD1A0\uD070)`);
     const chunkContext = { ...context, files: chunks[i] };
     const result = await generateKoreanReview(chunkContext, config);
     results.push(result);
   }
   return mergeResults(results, chunks.length);
-}
-function chunkFiles(files, size) {
-  const chunks = [];
-  for (let i = 0; i < files.length; i += size) {
-    chunks.push(files.slice(i, i + size));
-  }
-  return chunks;
 }
 function mergeResults(results, chunkCount) {
   const inputTokens = results.reduce((s, r) => s + r.inputTokens, 0);

@@ -13,7 +13,10 @@ import { loadTeamLearning, formatLearningForPrompt } from './learning';
 
 // 총 시도 횟수 (초기 1회 + 타임아웃 재시도 1회)
 const MAX_ATTEMPTS = 2;
-const CHUNK_SIZE = 8; // 대형 PR 청킹 임계값 (파일 수)
+// 파일 수 기반 청킹 임계값
+const CHUNK_FILE_THRESHOLD = 8;
+// 청크당 최대 예상 토큰 수 (시스템 프롬프트 ~5k + 컨벤션 ~3k + 출력 ~4k 제외)
+const CHUNK_TOKEN_BUDGET = 150_000;
 
 // ═══════════════════════════════════════════════════════════════
 // 시스템 프롬프트 빌더
@@ -315,8 +318,45 @@ async function callClaude(
 // 대형 PR 청킹
 // ═══════════════════════════════════════════════════════════════
 
-export function shouldChunk(context: PRContext, config: PRmateConfig): boolean {
-  return context.files.length > CHUNK_SIZE;
+/**
+ * patch 문자 수 기반 토큰 추정 (코드 평균 4자 = 1토큰)
+ */
+function estimateFileTokens(file: ParsedFile): number {
+  return Math.ceil((file.patch?.length ?? 0) / 4);
+}
+
+/**
+ * 파일 수 또는 총 추정 토큰이 예산을 초과하면 청킹 필요
+ */
+export function shouldChunk(context: PRContext, _config: PRmateConfig): boolean {
+  if (context.files.length > CHUNK_FILE_THRESHOLD) return true;
+  const totalTokens = context.files.reduce((sum, f) => sum + estimateFileTokens(f), 0);
+  return totalTokens > CHUNK_TOKEN_BUDGET;
+}
+
+/**
+ * 토큰 예산 기반 동적 청킹
+ * 각 청크가 CHUNK_TOKEN_BUDGET을 초과하지 않도록 파일을 누적
+ * (단일 파일이 예산 초과인 경우 해당 파일만 단독 청크로 처리)
+ */
+function chunkByTokenBudget(files: ParsedFile[]): ParsedFile[][] {
+  const chunks: ParsedFile[][] = [];
+  let current: ParsedFile[] = [];
+  let currentTokens = 0;
+
+  for (const file of files) {
+    const tokens = estimateFileTokens(file);
+    if (current.length > 0 && currentTokens + tokens > CHUNK_TOKEN_BUDGET) {
+      chunks.push(current);
+      current = [file];
+      currentTokens = tokens;
+    } else {
+      current.push(file);
+      currentTokens += tokens;
+    }
+  }
+  if (current.length > 0) chunks.push(current);
+  return chunks;
 }
 
 /**
@@ -326,12 +366,13 @@ export async function generateChunkedReview(
   context: PRContext,
   config: PRmateConfig
 ): Promise<ReviewResult> {
-  const chunks = chunkFiles(context.files, CHUNK_SIZE);
-  console.log(`[PRmate] 대형 PR 청킹: ${chunks.length}개 청크로 분할 처리`);
+  const chunks = chunkByTokenBudget(context.files);
+  console.log(`[PRmate] 대형 PR 청킹: ${chunks.length}개 청크로 분할 처리 (토큰 예산 기반)`);
 
   const results: ReviewResult[] = [];
   for (let i = 0; i < chunks.length; i++) {
-    console.log(`[PRmate] 청크 ${i + 1}/${chunks.length} 처리 중...`);
+    const estimatedTokens = chunks[i].reduce((s, f) => s + estimateFileTokens(f), 0);
+    console.log(`[PRmate] 청크 ${i + 1}/${chunks.length} 처리 중... (${chunks[i].length}파일, 추정 ${estimatedTokens.toLocaleString()} 토큰)`);
     const chunkContext: PRContext = { ...context, files: chunks[i] };
     const result = await generateKoreanReview(chunkContext, config);
     results.push(result);
@@ -339,14 +380,6 @@ export async function generateChunkedReview(
 
   // 청크 결과 병합
   return mergeResults(results, chunks.length);
-}
-
-function chunkFiles(files: ParsedFile[], size: number): ParsedFile[][] {
-  const chunks: ParsedFile[][] = [];
-  for (let i = 0; i < files.length; i += size) {
-    chunks.push(files.slice(i, i + size));
-  }
-  return chunks;
 }
 
 function mergeResults(results: ReviewResult[], chunkCount: number): ReviewResult {
