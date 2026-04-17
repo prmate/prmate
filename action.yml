@@ -1,5 +1,5 @@
 name: 'PRmate — 한국어 AI 코드 리뷰'
-description: 'GitHub PR을 자동으로 한국어로 리뷰합니다. 우아한형제들/카카오/네이버 등 국내 컨벤션 프리셋 내장.'
+description: 'GitHub PR을 자동으로 한국어로 리뷰합니다. 우아한테크코스/네이버/토스 등 공식 공개 컨벤션 프리셋 내장.'
 author: 'PRmate Team'
 
 branding:
