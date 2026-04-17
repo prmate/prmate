@@ -90,11 +90,11 @@ const COMPARISON = [
   { feature: '한국어 리뷰 품질', prmate: '공식 지원 (번역체 없음)', competitor: '설정 옵션 (실전 영어 많음)', winner: 'prmate' },
   { feature: '한국 IT사 공식 컨벤션', prmate: '우아한/네이버/토스 3종', competitor: '없음', winner: 'prmate' },
   { feature: '비용 투명성', prmate: 'PR마다 USD/KRW 표시', competitor: '구독제', winner: 'prmate' },
-  { feature: '오픈소스', prmate: '오픈소스', competitor: 'Closed source', winner: 'prmate' },
   { feature: '가격', prmate: '베타 유료기능 무료 / Starter ₩9,900', competitor: '$15/월 ~', winner: 'prmate' },
   { feature: '커스텀 컨벤션 파일', prmate: '.md 주입 기본 지원', competitor: '제한적', winner: 'prmate' },
   { feature: '설치 난이도', prmate: 'YAML 한 줄 (5분)', competitor: '원클릭 (GitHub App)', winner: 'competitor' },
-  { feature: '원클릭 설치', prmate: '미지원 (Phase 4 예정)', competitor: '지원', winner: 'competitor' },
+  { feature: 'Slack · Discord 알림', prmate: '리뷰 즉시 알림 (무료)', competitor: '유료 예약 리포트만', winner: 'prmate' },
+  { feature: '원클릭 설치', prmate: '추후 업데이트 예정', competitor: '지원', winner: 'competitor' },
   { feature: 'PIPA (개인정보보호법) 모드', prmate: '있음', competitor: '없음', winner: 'prmate' },
   { feature: 'Zero Data Retention', prmate: '기본 내장', competitor: '엔터프라이즈만', winner: 'prmate' },
 ];
@@ -151,6 +151,7 @@ const FEATURES = [
   { icon: '🔐', title: '보안 전용 스캐너', desc: 'SQL Injection, XSS, SSRF 등 보안 취약점만 집중.' },
   { icon: '📦', title: '대형 PR 자동 청킹', desc: '8+ 파일 변경 시 자동 분할 호출. 타임아웃 안전.' },
   { icon: '🎓', title: '팀 스타일 학습', desc: '.prmate/style-guide.md로 팀 규칙 주입.' },
+  { icon: '🔔', title: 'Slack · Discord 알림', desc: '리뷰 완료/실패 시 팀 채널로 즉시 알림. Webhook URL만 등록하면 끝.' },
 ];
 
 const BEFORE_AFTER = {
@@ -296,6 +297,7 @@ const FAQ = [
   { q: '설치가 복잡한가요?', a: 'YAML 파일 하나를 복사+붙여넣기, 5분 이내 완료. GitHub Action 방식이라 별도 서버 불필요.' },
   { q: '베타 기간 중 무료인가요?', a: '네, 베타 기간 중 모든 유료기능 무료입니다. 베타 참여자에게는 정식 출시 후 50% 할인 혜택을 제공할 예정입니다. 피드백은 GitHub Discussions에서 환영합니다.' },
   { q: '월 PR 한도를 초과하면 어떻게 되나요?', a: '베타 기간 중에는 한도 관계없이 모든 기능을 자유롭게 이용하실 수 있습니다. 정식 출시 후에는 한도 초과분이 해당 월 동안 대기 상태가 되며, 다음 달 1일 자동 초기화됩니다. 초과가 잦은 경우 상위 플랜 업그레이드 또는 추가 크레딧 구매로 해결 가능합니다.' },
+  { q: '리뷰 완료를 어떻게 알 수 있나요?', a: 'Slack 또는 Discord Webhook URL을 .prmate.yml에 등록하면 리뷰 완료/실패 시 팀 채널로 즉시 알림을 받을 수 있습니다. CodeRabbit 등 경쟁 도구가 유료 플랜에서 예약 리포트 방식으로 제공하는 것과 달리, PRmate는 PR 이벤트 즉시 전송합니다.' },
   { q: 'GitHub App으로도 쓸 수 있나요?', a: '현재는 GitHub Action 방식만 지원. GitHub App은 2026년 하반기 출시 예정입니다.' },
 ];
 
